@@ -3,6 +3,7 @@
 const express = require("express");
 // connect to mongodb
 require("./config/mongoose");
+const passport = require("passport");
 
 // api routes
 const userRoutes = require("./routes/api/user");
@@ -13,6 +14,11 @@ const app = express();
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+// Passport middleware
+app.use(passport.initialize());
+// Passport Config
+require("./config/passport")(passport);
 
 app.get("/", (req, res) => res.send("<h1> Welcome to Dev Connector </h1>"));
 

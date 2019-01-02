@@ -22,6 +22,17 @@ const UserSchema = new mongoose.Schema({
   }
 });
 
+UserSchema.methods.toJSON = function() {
+  let user = this;
+  return {
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    avatar: user.avatar,
+    date: user.date
+  };
+};
+
 UserSchema.pre("save", function(next) {
   const user = this;
   if (user.isModified("password")) {
