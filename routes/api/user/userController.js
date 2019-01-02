@@ -1,6 +1,14 @@
 const User = require("./../../../models/User");
 const gravatar = require("gravatar");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const keys = require("./../../../config/keys");
 
+/**
+ * @route POST /api/users/register
+ * @description Register a new user
+ * @access Public
+ */
 const userRegisterContoller = async (req, res) => {
   const userWithEmail = await User.findOne({
     email: req.body.email
@@ -26,6 +34,44 @@ const userRegisterContoller = async (req, res) => {
   return res.json(newUser);
 };
 
+const userLoginController = async (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const userWithEmail = await User.findOne({
+    email
+  });
+
+  if (!userWithEmail) {
+    return res.status(404).json({
+      email: "User not found"
+    });
+  }
+
+  const isMatch = await bcrypt.compare(password, userWithEmail.password);
+  if (!isMatch) {
+    return res.status(400).json({
+      password: "Password is incorrect"
+    });
+  }
+
+  // create jwt
+  const payload = {
+    id: userWithEmail.id,
+    name: userWithEmail.name,
+    avatar: userWithEmail.avatar
+  };
+
+  const token = await jwt.sign(payload, keys.JWT_SECRET_KEY, {
+    expiresIn: "1d"
+  });
+
+  return res.json({
+    success: true,
+    token: `Bearer ${token}`
+  });
+};
+
 module.exports = {
-  userRegisterContoller
+  userRegisterContoller,
+  userLoginController
 };

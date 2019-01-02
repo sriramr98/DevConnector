@@ -15,4 +15,11 @@ router.get("/test", (req, res) => {
  */
 router.post("/register", userController.userRegisterContoller);
 
+/**
+ * @route POST /api/users/login
+ * @description Login a new user
+ * @access Public
+ */
+router.post("/login", userController.userLoginController);
+
 module.exports = router;
