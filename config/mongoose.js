@@ -1,11 +1,12 @@
-const mongodb = require("mongodb");
+const mongoose = require("mongoose");
 const { MONGODB_URI } = require("./keys");
 
-mongodb
+mongoose
   .connect(
     MONGODB_URI,
     {
-      useNewUrlParser: true
+      useNewUrlParser: true,
+      useCreateIndex: true
     }
   )
   .then(() => console.log("Mongodb Started"))

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -14,13 +15,29 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  avatar: {
-    type: String,
-    required: true
-  },
+  avatar: String,
   date: {
     type: Date,
     default: Date.now
+  }
+});
+
+UserSchema.pre("save", function(next) {
+  const user = this;
+  if (user.isModified("password")) {
+    console.log("Modifying password");
+    bcrypt
+      .genSalt(10)
+      .then(salt => {
+        return bcrypt.hash(user.password, salt);
+      })
+      .then(hash => {
+        user.password = hash;
+        next();
+      })
+      .catch(e => console.log(`Error during hashing password ${e}`));
+  } else {
+    next();
   }
 });
 

@@ -11,6 +11,9 @@ const postsRoutes = require("./routes/api/post");
 
 const app = express();
 
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+
 app.get("/", (req, res) => res.send("<h1> Welcome to Dev Connector </h1>"));
 
 app.use("/api/users", userRoutes);
