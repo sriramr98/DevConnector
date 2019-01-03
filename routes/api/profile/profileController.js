@@ -1,6 +1,7 @@
 const Profile = require('./../../../models/Profile');
 const User = require('./../../../models/User');
 const profileValidator = require('./profileValidator');
+const { ObjectId } = require('mongodb');
 
 const getCurrentProfileController = async (req, res) => {
     const errors = {};
@@ -69,11 +70,38 @@ const getProfileWithHandleController = (req, res) => {
             }
             res.json(profile);
         })
+        .catch(e =>
+            res.status(400).json({
+                noprofile: 'There is no profile for this user'
+            })
+        );
+};
+
+const getProfileWithIdController = (req, res) => {
+    const errors = {};
+    const userId = req.params.id;
+    if (!ObjectIdc.isValid(userId)) {
+        return res.status(400).json({
+            error: 'Invalid User ID'
+        });
+    }
+    Profile.findOne({
+        user: userId
+    })
+        .populate('user', ['name', 'avatar', 'email'])
+        .then(profile => {
+            if (!profile) {
+                errors.noprofile = 'There is no profile for this user';
+                return res.status(404).json(errors);
+            }
+            res.json(profile);
+        })
         .catch(e => res.status(400).json(e));
 };
 
 module.exports = {
     getCurrentProfileController,
     createProfileController,
-    getProfileWithHandleController
+    getProfileWithHandleController,
+    getProfileWithIdController
 };

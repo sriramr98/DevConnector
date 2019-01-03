@@ -35,4 +35,11 @@ router.post(
  */
 router.get('/handle/:handle', profileController.getProfileWithHandleController);
 
+/**
+ * @route /api/profile/user/:user_id
+ * @description Get profile by handle
+ * @access Public
+ */
+router.get('/user/:id', profileController.getProfileWithIdController);
+
 module.exports = router;
