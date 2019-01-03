@@ -16,4 +16,16 @@ router.get(
     profileController.getCurrentProfileController
 );
 
+/**
+ * @route /api/profile
+ * @description Create / Update the profile of a user
+ * @access Private
+ */
+router.post(
+    '/',
+    passport.authenticate('jwt', { session: false }),
+    profileValidator.validateCreatProfileRoute,
+    profileController.createProfileController
+);
+
 module.exports = router;

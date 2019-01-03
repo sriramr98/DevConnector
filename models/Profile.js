@@ -84,7 +84,8 @@ const ProfileSchema = new mongoose.Schema({
         youtube: String,
         facebook: String,
         twitter: String,
-        instagram: String
+        instagram: String,
+        linkedin: String
     },
     date: {
         type: Date,

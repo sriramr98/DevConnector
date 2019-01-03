@@ -1,5 +1,6 @@
 const Profile = require('./../../../models/Profile');
 const User = require('./../../../models/User');
+const profileValidator = require('./profileValidator');
 
 const getCurrentProfileController = async (req, res) => {
     const errors = {};
@@ -19,6 +20,42 @@ const getCurrentProfileController = async (req, res) => {
         });
 };
 
+const createProfileController = async (req, res) => {
+    const errors = {};
+    const profileFields = req.profile; // sent from the validator.
+    const profile = await Profile.findOne({
+        user: req.user.id
+    });
+    if (profile) {
+        const updatedProfile = await Profile.findOneAndUpdate(
+            {
+                user: req.user.id
+            },
+            {
+                $set: profileFields
+            },
+            {
+                new: true
+            }
+        );
+        return res.json(updatedProfile);
+    } else {
+        // create a new profile
+        // check if handle exists
+        const profileWithHandle = await Profile.findOne({
+            handle: profileFields.handle
+        });
+        if (profileWithHandle) {
+            errors.handle = 'That handle already exists';
+            return res.status(400).json(errors);
+        }
+
+        const savedProfile = await new Profile(profileFields).save();
+        return res.json(savedProfile);
+    }
+};
+
 module.exports = {
-    getCurrentProfileController
+    getCurrentProfileController,
+    createProfileController
 };
