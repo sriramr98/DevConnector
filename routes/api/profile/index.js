@@ -28,4 +28,11 @@ router.post(
     profileController.createProfileController
 );
 
+/**
+ * @route /api/profile/handle/:handle
+ * @description Get profile by handle
+ * @access Public
+ */
+router.get('/handle/:handle', profileController.getProfileWithHandleController);
+
 module.exports = router;

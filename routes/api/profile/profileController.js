@@ -56,7 +56,24 @@ const createProfileController = async (req, res) => {
     }
 };
 
+const getProfileWithHandleController = (req, res) => {
+    const errors = {};
+    Profile.findOne({
+        handle: req.params.handle
+    })
+        .populate('user', ['name', 'avatar', 'email'])
+        .then(profile => {
+            if (!profile) {
+                errors.noprofile = 'There is no profile for this user';
+                return res.status(404).json(errors);
+            }
+            res.json(profile);
+        })
+        .catch(e => res.status(400).json(e));
+};
+
 module.exports = {
     getCurrentProfileController,
-    createProfileController
+    createProfileController,
+    getProfileWithHandleController
 };
