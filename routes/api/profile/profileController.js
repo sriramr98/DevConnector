@@ -7,6 +7,7 @@ const getCurrentProfileController = async (req, res) => {
     Profile.findOne({
         user: req.user.id
     })
+        .populate('user')
         .then(profile => {
             if (!profile) {
                 errors.noprofile = 'There is no profile for this user';
