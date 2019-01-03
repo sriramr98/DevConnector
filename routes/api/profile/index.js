@@ -42,4 +42,11 @@ router.get('/handle/:handle', profileController.getProfileWithHandleController);
  */
 router.get('/user/:id', profileController.getProfileWithIdController);
 
+/**
+ * @route /api/profile/all
+ * @description Get all profiles
+ * @access Public
+ */
+router.get('/all', profileController.getAllProfilesController);
+
 module.exports = router;

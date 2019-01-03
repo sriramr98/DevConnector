@@ -99,9 +99,26 @@ const getProfileWithIdController = (req, res) => {
         .catch(e => res.status(400).json(e));
 };
 
+const getAllProfilesController = (req, res) => {
+    const errors = {};
+    Profile.find()
+        .populate('user', ['name', 'avatar'])
+        .then(profiles => {
+            if (!profiles) {
+                errors.noprofile = 'There are no profiles';
+                return res.status(404).json(errors);
+            }
+            return res.json(profiles);
+        })
+        .catch(e =>
+            res.status(400).json({ noprofile: 'There are no profiles' })
+        );
+};
+
 module.exports = {
     getCurrentProfileController,
     createProfileController,
     getProfileWithHandleController,
-    getProfileWithIdController
+    getProfileWithIdController,
+    getAllProfilesController
 };
