@@ -71,4 +71,15 @@ router.post(
     profileController.addEducationToProfileController
 );
 
+/**
+ * @route /api/profile/experience/:exp_id
+ * @description Delete experience from profile
+ * @access Private
+ */
+router.delete(
+    '/experience/:id',
+    passport.authenticate('jwt', { session: false }),
+    profileController.deleteExperienceController
+);
+
 module.exports = router;

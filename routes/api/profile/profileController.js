@@ -196,6 +196,33 @@ const addEducationToProfileController = (req, res) => {
         .catch(e => res.status(400).json(e));
 };
 
+const deleteExperienceController = (req, res) => {
+    Profile.findOneAndUpdate(
+        {
+            user: req.user.id
+        },
+        {
+            $pull: {
+                experience: {
+                    _id: req.params.id
+                }
+            }
+        },
+        {
+            new: true
+        }
+    )
+        .then(profile => {
+            if (!profile) {
+                errors.noprofile = 'No profile found for the given user';
+                return res.status(400).json(errors);
+            }
+
+            return res.json(profile);
+        })
+        .catch(e => res.status(404).json(e));
+};
+
 module.exports = {
     getCurrentProfileController,
     createProfileController,
@@ -203,5 +230,6 @@ module.exports = {
     getProfileWithIdController,
     getAllProfilesController,
     addExperienceToProfileController,
-    addEducationToProfileController
+    addEducationToProfileController,
+    deleteExperienceController
 };
