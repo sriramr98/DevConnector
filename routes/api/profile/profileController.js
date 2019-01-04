@@ -157,11 +157,51 @@ const addExperienceToProfileController = (req, res) => {
         .catch(e => res.status(400).json(e));
 };
 
+const addEducationToProfileController = (req, res) => {
+    let { errors, isValid } = profileValidator.validateAddEducationRoute(
+        req.body
+    );
+    if (!isValid) {
+        return res.status(400).json(errors);
+    }
+    errors = {};
+    const newEducation = {
+        school: req.body.school,
+        degree: req.body.degree,
+        fieldofstudy: req.body.fieldofstudy,
+        from: req.body.from,
+        to: req.body.to,
+        isCurrent: req.body.isCurrent,
+        description: req.body.description
+    };
+
+    Profile.findOneAndUpdate(
+        {
+            user: req.user.id
+        },
+        {
+            $push: {
+                education: newEducation
+            }
+        },
+        {
+            new: true
+        }
+    )
+        .then(profile => {
+            errors.noprofile = 'A profile does not exist for the user';
+            if (!profile) return res.status(400).json(errors);
+            return res.json(profile);
+        })
+        .catch(e => res.status(400).json(e));
+};
+
 module.exports = {
     getCurrentProfileController,
     createProfileController,
     getProfileWithHandleController,
     getProfileWithIdController,
     getAllProfilesController,
-    addExperienceToProfileController
+    addExperienceToProfileController,
+    addEducationToProfileController
 };
