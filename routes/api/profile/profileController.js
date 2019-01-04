@@ -250,6 +250,19 @@ const deleteEducationController = (req, res) => {
         .catch(e => res.status(404).json(e));
 };
 
+const deleteProfileController = (req, res) => {
+    Profile.findOneAndDelete({
+        user: req.user.id
+    })
+        .then(() => {
+            return User.findByIdAndDelete(req.user.id);
+        })
+        .then(() => {
+            return res.json({ success: true });
+        })
+        .catch(e => res.status(400).json(e));
+};
+
 module.exports = {
     getCurrentProfileController,
     createProfileController,
@@ -259,5 +272,6 @@ module.exports = {
     addExperienceToProfileController,
     addEducationToProfileController,
     deleteExperienceController,
-    deleteEducationController
+    deleteEducationController,
+    deleteProfileController
 };
