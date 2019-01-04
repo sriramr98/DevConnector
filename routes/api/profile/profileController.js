@@ -115,10 +115,53 @@ const getAllProfilesController = (req, res) => {
         );
 };
 
+const addExperienceToProfileController = (req, res) => {
+    let { errors, isValid } = profileValidator.validateAddExperienceRoute(
+        req.body
+    );
+
+    if (!isValid) {
+        return res.status(400).json(errors);
+    }
+
+    errors = {};
+    const newExp = {
+        title: req.body.title,
+        company: req.body.company,
+        location: req.body.location,
+        from: req.body.from,
+        to: req.body.to,
+        current: req.body.current,
+        description: req.body.description
+    };
+    Profile.findOneAndUpdate(
+        {
+            user: req.user.id
+        },
+        {
+            $push: {
+                experience: newExp
+            }
+        },
+        {
+            new: true
+        }
+    )
+        .then(profile => {
+            if (!profile) {
+                errors.noprofile = 'Unable to find a profile for the user';
+                return res.status(404).json(errors);
+            }
+            return res.json(profile);
+        })
+        .catch(e => res.status(400).json(e));
+};
+
 module.exports = {
     getCurrentProfileController,
     createProfileController,
     getProfileWithHandleController,
     getProfileWithIdController,
-    getAllProfilesController
+    getAllProfilesController,
+    addExperienceToProfileController
 };

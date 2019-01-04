@@ -49,4 +49,15 @@ router.get('/user/:id', profileController.getProfileWithIdController);
  */
 router.get('/all', profileController.getAllProfilesController);
 
+/**
+ * @route /api/profile/experience
+ * @description Add an experience to profile
+ * @access Private
+ */
+router.post(
+    '/experience',
+    passport.authenticate('jwt', { session: false }),
+    profileController.addExperienceToProfileController
+);
+
 module.exports = router;
