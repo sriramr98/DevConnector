@@ -25,6 +25,31 @@ const createPostController = (req, res) => {
         });
 };
 
+const getAllPostsController = (req, res) => {
+    Post.find()
+        .sort({
+            date: -1
+        })
+        .then(posts => res.json(posts))
+        .catch(e => res.status(400).json(e));
+};
+
+const getPostByIdController = (req, res) => {
+    console.log(req.params.id);
+    Post.findById(req.params.id)
+        .then(post => {
+            if (!post) {
+                return res.status(404).json({
+                    error: 'No post found for the given ID'
+                });
+            }
+            res.json(post);
+        })
+        .catch(e => res.status(400).json(e));
+};
+
 module.exports = {
-    createPostController
+    createPostController,
+    getAllPostsController,
+    getPostByIdController
 };
