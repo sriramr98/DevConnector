@@ -13,6 +13,20 @@ const createPostValidation = post => {
     };
 };
 
+const addCommentValidation = comment => {
+    let errors = {};
+
+    if (_.isEmpty(comment.text)) {
+        errors.text = 'Comment text cannot be empty';
+    }
+
+    return {
+        errors,
+        isValid: _.isEmpty(errors)
+    };
+};
+
 module.exports = {
-    createPostValidation
+    createPostValidation,
+    addCommentValidation
 };

@@ -139,11 +139,87 @@ const unlikePostController = (req, res) => {
         });
 };
 
+const addCommentController = (req, res) => {
+    let { errors, isValid } = postValidator.addCommentValidation(req.body);
+    if (!isValid) {
+        return res.status(400).json(errors);
+    }
+    errors = {};
+    const comment = {
+        text: req.body.text,
+        name: req.user.name,
+        avatar: req.user.avatar,
+        user: req.user.id
+    };
+    Post.findOneAndUpdate(
+        {
+            _id: req.params.id
+        },
+        {
+            $push: {
+                comments: comment
+            }
+        },
+        {
+            new: true
+        }
+    )
+        .then(post => {
+            if (!post) {
+                errors.error = 'Unable to add comment to the post';
+                return res.status(400).json(errors);
+            }
+            return res.json(post);
+        })
+        .catch(e => res.json(e));
+};
+
+const deleteCommentController = (req, res) => {
+    const postId = req.params.postId;
+    const commentId = req.params.commentId;
+
+    console.log(postId, commentId);
+
+    Post.findOneAndUpdate(
+        {
+            _id: postId,
+            comments: {
+                $elemMatch: {
+                    _id: commentId,
+                    user: req.user.id
+                }
+            }
+        },
+        {
+            $pull: {
+                comments: {
+                    _id: commentId,
+                    user: req.user.id
+                }
+            }
+        },
+        {
+            new: true
+        }
+    )
+        .then(post => {
+            if (!post) {
+                return res.status(400).json({
+                    error: 'Unable to remove comment from the post'
+                });
+            }
+            return res.json(post);
+        })
+        .catch(e => res.json(e));
+};
+
 module.exports = {
     createPostController,
     getAllPostsController,
     getPostByIdController,
     deletePostByIdController,
     likePostController,
-    unlikePostController
+    unlikePostController,
+    addCommentController,
+    deleteCommentController
 };
