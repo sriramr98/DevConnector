@@ -49,4 +49,59 @@ router.get('/user/:id', profileController.getProfileWithIdController);
  */
 router.get('/all', profileController.getAllProfilesController);
 
+/**
+ * @route /api/profile/experience
+ * @description Add an experience to profile
+ * @access Private
+ */
+router.post(
+    '/experience',
+    passport.authenticate('jwt', { session: false }),
+    profileController.addExperienceToProfileController
+);
+
+/**
+ * @route /api/profile/education
+ * @description Add an education to profile
+ * @access Private
+ */
+router.post(
+    '/education',
+    passport.authenticate('jwt', { session: false }),
+    profileController.addEducationToProfileController
+);
+
+/**
+ * @route /api/profile/experience/:exp_id
+ * @description Delete experience from profile
+ * @access Private
+ */
+router.delete(
+    '/experience/:id',
+    passport.authenticate('jwt', { session: false }),
+    profileController.deleteExperienceController
+);
+
+/**
+ * @route /api/profile/education/:edu_id
+ * @description Delete education from profile
+ * @access Private
+ */
+router.delete(
+    '/education/:id',
+    passport.authenticate('jwt', { session: false }),
+    profileController.deleteEducationController
+);
+
+/**
+ * @route /api/profile/
+ * @description Delete user and profile
+ * @access Private
+ */
+router.delete(
+    '/',
+    passport.authenticate('jwt', { session: false }),
+    profileController.deleteProfileController
+);
+
 module.exports = router;
