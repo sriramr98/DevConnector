@@ -31,4 +31,15 @@ router.get('/', postController.getAllPostsController);
  */
 router.get('/:id', postController.getPostByIdController);
 
+/**
+ * @route DELETE api/posts/:post_id
+ * @description Delete a specific post by id
+ * @access Private
+ */
+router.delete(
+    '/:id',
+    passport.authenticate('jwt', { session: false }),
+    postController.deletePostByIdController
+);
+
 module.exports = router;

@@ -48,8 +48,31 @@ const getPostByIdController = (req, res) => {
         .catch(e => res.status(400).json(e));
 };
 
+const deletePostByIdController = (req, res) => {
+    Post.findOneAndDelete({
+        _id: req.params.id,
+        user: req.user.id
+    })
+        .then(data => {
+            if (!data) {
+                return res.status(404).json({
+                    success: false
+                });
+            }
+            return res.json({
+                success: true
+            });
+        })
+        .catch(e => {
+            return res.status(404).json({
+                error: 'Unable to find post to delete'
+            });
+        });
+};
+
 module.exports = {
     createPostController,
     getAllPostsController,
-    getPostByIdController
+    getPostByIdController,
+    deletePostByIdController
 };
