@@ -70,9 +70,80 @@ const deletePostByIdController = (req, res) => {
         });
 };
 
+const likePostController = (req, res) => {
+    const postId = req.params.id;
+    const conditions = {
+        _id: postId,
+        'likes.user': {
+            $ne: req.user.id
+        }
+    };
+
+    const update = {
+        $addToSet: {
+            likes: {
+                user: req.user.id
+            }
+        }
+    };
+
+    Post.findOneAndUpdate(conditions, update, {
+        new: true
+    })
+        .then(post => {
+            if (!post) {
+                return res.status(404).json({
+                    error: 'You have already liked the post'
+                });
+            }
+            return res.json(post);
+        })
+        .catch(e => {
+            console.log(e);
+            res.status(500).json(e);
+        });
+};
+
+const unlikePostController = (req, res) => {
+    const condition = {
+        _id: req.params.id,
+        likes: {
+            $elemMatch: {
+                user: req.user.id
+            }
+        }
+    };
+
+    const update = {
+        $pull: {
+            likes: {
+                user: req.user.id
+            }
+        }
+    };
+
+    Post.findOneAndUpdate(condition, update, {
+        new: true
+    })
+        .then(post => {
+            if (!post) {
+                return res.status(400).json({
+                    error: 'You have not liked the post to unlike it'
+                });
+            }
+            return res.json(post);
+        })
+        .catch(e => {
+            console.log(e);
+            return res.json(e);
+        });
+};
+
 module.exports = {
     createPostController,
     getAllPostsController,
     getPostByIdController,
-    deletePostByIdController
+    deletePostByIdController,
+    likePostController,
+    unlikePostController
 };
